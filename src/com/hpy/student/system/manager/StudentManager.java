@@ -9,6 +9,8 @@ package com.hpy.student.system.manager;
 
 import com.hpy.student.system.entity.Students;
 
+import java.util.Scanner;
+
 /**
  * @author hpy
  * @version v1.0
@@ -191,11 +193,132 @@ public class StudentManager {
         }
 
         Students student = allStudents[index];
-        while(true){
-
+        int choice = 0;
+        boolean flag = false;
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            System.out.println("修改" + student.getName() + "的信息");
+            System.out.println("学生id:" + student.getId());
+            System.out.println("学生年龄：" + student.getAge() + "  学生性别：" + (student.isGender() ? '男' : '女') + "  班级：" + student.getClassName());
+            System.out.println("JAVA成绩：" + student.getJavaScore() + "  c成绩：" + student.getcScore() + "  PHP成绩：" + student.getPhpScore());
+            System.out.println("HTML成绩：" + student.getHtmlScore() + "  总成绩：" + student.getTotalScore() + "  rank:" + student.getRank());
+            System.out.println("1.修改学生姓名");
+            System.out.println("2.修改学生年龄");
+            System.out.println("3.修改学生性别");
+            System.out.println("4.修改学生班级");
+            System.out.println("5.修改学生Java成绩");
+            System.out.println("6.修改学生c成绩");
+            System.out.println("7.修改学生PHP成绩");
+            System.out.println("8.修改学生html成绩");
+            System.out.println("9.退出");
+            choice = scanner.nextInt();
+            //请在获取后加入nextline()
+            scanner.nextLine();
+            switch (choice) {
+                case 1:
+                    System.out.println("输入学生新姓名：");
+                    String name = scanner.nextLine().trim();
+                    if (name.length() == 0) {
+                        System.out.println("输入姓名有误，修改失败");
+                        name = student.getName();
+                    }
+                    student.setName(name);
+                    break;
+                case 2:
+                    System.out.println("输入学生新年龄");
+                    int age = scanner.nextInt();
+                    if (age <= 0) {
+                        System.out.println("输入有误，修改失败");
+                        age = student.getAge();
+                    }
+                    student.setAge(age);
+                    break;
+                case 3:
+                    System.out.println("输入新性别：男/女");
+                    char gender = scanner.nextLine().charAt(0);
+                    if (gender == '男' || gender == '女') {
+                        student.setGender(gender == '男');
+                    } else {
+                        System.out.println("输入有误,修改失败");
+                    }
+                    break;
+                case 4:
+                    System.out.println("输入新的班级");
+                    String className = scanner.nextLine().trim();
+                    if (className.length() == 0) {
+                        System.out.println("输入有误，修改失败");
+                        className = student.getClassName();
+                    }
+                    student.setClassName(className);
+                    break;
+                case 5:
+                    System.out.println("输入新的成绩");
+                    float javaScore = scanner.nextFloat();
+                    if (javaScore < 0 || javaScore > 100) {
+                        System.out.println("输入有误，修改失败");
+                        javaScore = student.getJavaScore();
+                    }
+                    student.setJavaScore(javaScore);
+                    break;
+                case 6:
+                    System.out.println("输入新的成绩");
+                    float cScore = scanner.nextFloat();
+                    if (cScore < 0 || cScore > 100) {
+                        System.out.println("输入有误，修改失败");
+                        cScore = student.getcScore();
+                    }
+                    student.setcScore(cScore);
+                    break;
+                case 7:
+                    System.out.println("输入新的成绩");
+                    float phpScore = scanner.nextFloat();
+                    if (phpScore < 0 || phpScore > 100) {
+                        System.out.println("输入有误，修改失败");
+                        phpScore = student.getPhpScore();
+                    }
+                    student.setPhpScore(phpScore);
+                    break;
+                case 8:
+                    System.out.println("输入新的成绩");
+                    float htmlScore = scanner.nextFloat();
+                    if (htmlScore < 0 || htmlScore > 100) {
+                        System.out.println("输入有误，修改失败");
+                        htmlScore = student.getHtmlScore();
+                    }
+                    student.setHtmlScore(htmlScore);
+                    break;
+                case 9:
+                    System.out.println("欢迎下次使用");
+                    flag = true;
+                    break;
+                default:
+                    break;
+            }
+            if (flag) {
+                System.out.println("再见！");
+                break;
+            }
         }
+        return true;
     }
+    /*
+    根据学生id获取学生对象
+    方法分析：
+        方法名：get
+        形式参数列表：int studentId
+        返回值类型：Student student / null
+        修饰 public
+    */
 
+    /**
+     * 根据学生Id号获取学生信息
+     * @param studentId 学生id号
+     * @return 找到返回学生对象 找不到返回null
+     */
+    public Students get(int studentId) {
+        int index = findIndexById(studentId);
+        return index >= 0 ? allStudents[index] : null;
+    }
     /*
     封装根据学生id转换下标位置
 
