@@ -166,6 +166,7 @@ public class StudentManager {
             allStudents[i] = allStudents[i + 1];
         }
         allStudents[size - 1] = null;
+        size--;
         return true;
     }
     /*
