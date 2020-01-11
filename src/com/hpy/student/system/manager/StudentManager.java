@@ -8,7 +8,10 @@ package com.hpy.student.system.manager;
  */
 
 import com.hpy.student.system.entity.Students;
+import com.hpy.student.system.util.MyCompare;
+import com.hpy.student.system.util.MyFilter;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 /**
@@ -323,7 +326,79 @@ public class StudentManager {
     封装根据学生id转换下标位置
 
      */
+    /*
+    方法分析：
+        按照总分降序排序
+        方法名：sortByTotalScoreDesc
+        形式参数列表：不需要
+        返回值不需要
+        权限修饰符：public
+        public void sortByTotalScoreDesc()
+     */
+    /**
+     * 根据学生的总分排序，降序
+     * 不允许对原始数据进行操作
+     */
+    public void sortByTotalScoreDesc(){
+        //1.创建一个新数组，将原数据取出进行排序
+        Students[] sortTemp = Arrays.copyOf(allStudents, size);
+        //2.选择排序算法
+        for (int i = 0; i < size - 1; i++) {
+            int index = i;
+            for (int j = i + 1; j < size; j++) {
+                if (sortTemp[index].getTotalScore() < sortTemp[j].getTotalScore()){
+                    index  = j;
+                }
+            }if (index != i){
+                Students temp = sortTemp[index];
+                sortTemp[index] = sortTemp[i];
+                sortTemp[i] = temp;
+            }
+        }
+        //3.展示数据
+        for (Students students : sortTemp) {
+            System.out.println(students);
+        }
+    }
 
+    /**
+     * 排序算法，使用一个自定义比较器接口实现作为方法的参数
+     * @param com MyCompare 接口的实现类对象
+     * @param flag int类型 1为降序，其他为升序
+     */
+    public void sortUsingCompare(MyCompare com,int flag){
+        //1.创建一个新数组，将原数据取出进行排序
+        Students[] sortTemp = Arrays.copyOf(allStudents, size);
+        //2.选择排序算法
+        for (int i = 0; i < size - 1; i++) {
+            int index = i;
+            for (int j = i + 1; j < size; j++) {
+                if (com.compare(sortTemp[index],sortTemp[j],flag) > 0){
+                    index  = j;
+                }
+            }if (index != i){
+                Students temp = sortTemp[index];
+                sortTemp[index] = sortTemp[i];
+                sortTemp[i] = temp;
+            }
+        }
+        //3.展示数据
+        for (Students students : sortTemp) {
+            System.out.println(students);
+        }
+    }
+
+    /**
+     * 展示使用自定义过滤器的显示学生信息
+     * @param filter 自定义过滤器接口
+     */
+    public void showInfoUsingMyFilter(MyFilter filter){
+        for (int i = 0; i < size; i++) {
+            if (filter.accept(allStudents[i])){
+                System.out.println(allStudents[i]);
+            }
+        }
+    }
     /**
      * 学生id转换下标位置
      *

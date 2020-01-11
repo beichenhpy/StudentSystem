@@ -2,24 +2,24 @@ package com.hpy.student.system.testProject;
 
 import com.hpy.student.system.entity.Students;
 import com.hpy.student.system.manager.StudentManager;
-import org.junit.Test;
+import com.hpy.student.system.util.MyCompare;
+import com.hpy.student.system.util.impl.MyCompareImpt;
+import com.hpy.student.system.util.impl.MyFilterImpl;
 
 public class TestSystem {
     public static void main(String[] args) {
 
         Students students = new Students(1, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students1 = new Students(2, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students2 = new Students(3, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students3 = new Students(4, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students4 = new Students(5, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students5 = new Students(6, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students6 = new Students(7, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students7 = new Students(8, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students8 = new Students(9, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students9 = new Students(10, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students10 = new Students(11, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students11 = new Students(12, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
-        Students students12 = new Students(13, "hpy", true, "计科161", 22, 76, 60, 8.6F, 87.5F);
+        Students students1 = new Students(2, "hpy", true, "计科161", 22, 16, 60, 8.6F, 87.5F);
+        Students students2 = new Students(3, "hpy", true, "计科161", 90, 90, 60, 8.6F, 87.5F);
+        Students students3 = new Students(4, "hpy", true, "计科161", 22, 46, 60, 8.6F, 87.5F);
+        Students students4 = new Students(5, "hpy", true, "计科161", 22, 56, 60, 8.6F, 87.5F);
+        Students students5 = new Students(6, "hpy", true, "计科161", 22, 66, 60, 8.6F, 87.5F);
+        Students students6 = new Students(7, "hpy", true, "计科161", 22, 26, 60, 8.6F, 87.5F);
+        Students students7 = new Students(8, "hpy", true, "计科161", 22, 96, 60, 8.6F, 87.5F);
+        Students students8 = new Students(9, "hpy", true, "计科161", 22, 26, 60, 8.6F, 87.5F);
+        Students students9 = new Students(10, "hpy", true, "计科161", 22, 36, 60, 8.6F, 87.5F);
+        Students students10 = new Students(11, "hpy", true, "计科161", 22, 36, 60, 8.6F, 87.5F);
 
         StudentManager studentManager = new StudentManager();
         studentManager.add(students);
@@ -33,12 +33,14 @@ public class TestSystem {
         studentManager.add(students8);
         studentManager.add(students9);
         studentManager.add(students10);
-        studentManager.add(3, students11);
-        studentManager.delete(8);
-        studentManager.show();
+        //studentManager.add(3, students11);
+        //studentManager.delete(8);
+        //studentManager.show();
         //studentManager.modify(1);
-        System.out.println(studentManager.get(1));
-
+        //System.out.println(studentManager.get(1));
+        //studentManager.sortByTotalScoreDesc();
+        studentManager.sortUsingCompare(new MyCompareImpt(),3);
+        studentManager.showInfoUsingMyFilter(new MyFilterImpl());
     }
 
 }
