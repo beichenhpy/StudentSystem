@@ -12,7 +12,7 @@ public class SystemMain {
     public static void main(String[] args) {
         StudentManager stm = new StudentManager();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 5; i++) {
             String name = "彭于晏" + i;
             int age = (int) (Math.random() * 50);
             boolean gender = Math.random() > 0.5;
@@ -21,11 +21,24 @@ public class SystemMain {
             float cScore = (float) (Math.random() * 100);
             float phpScore = (float) (Math.random() * 100);
             float htmlScore = (float) (Math.random() * 100);
-
-            stm.add(new Students(i, name, gender, className, age, javaScore, cScore, phpScore, htmlScore));
+            Students students = new Students();
+            students.setId(i);
+            students.setName(name);
+            students.setAge(age);
+            students.setGender(gender);
+            students.setHtmlScore(htmlScore);
+            students.setPhpScore(phpScore);
+            students.setJavaScore(javaScore);
+            students.setClassName(className);
+            students.setcScore(cScore);
+            stm.add(students);
+            stm.sortByTotalScoreDesc();
         }
 
+
+
         int choose = 0;
+        boolean flag = false;
         Scanner sc = new Scanner(System.in);
 
         while (true) {
@@ -47,10 +60,43 @@ public class SystemMain {
                     stm.show();
                     break;
                 case 2:
+                    System.out.println("请输出要查询学生Id");
+                    System.out.println(stm.get(sc.nextInt()));
                     break;
                 case 3:
+                    System.out.println("输入学生的基本信息，按照id,姓名,性别,班级,年龄,java成绩,c成绩,php成绩,html成绩,按回车继续");
+                    Students students = new Students();
+                    students.setId(sc.nextInt());
+                    students.setName(sc.next());
+                    String gender = sc.next();
+                    if (!("男".equals(gender) ||"女".equals(gender))){
+                        flag = true;
+                    }
+                    while (flag) {
+                        System.out.println("重新输入男女");
+                        String gender1 = sc.next();
+                        if ("男".equals(gender1) ||"女".equals(gender1)){
+                            flag = false;
+                        }
+                    }
+                    if ("男".equals(gender)){
+                        students.setGender(true);
+                    }else {
+                        students.setGender(false);
+                    }
+                    students.setClassName(sc.next());
+                    students.setAge(sc.nextInt());
+                    students.setJavaScore(sc.nextFloat());
+                    students.setPhpScore(sc.nextFloat());
+                    students.setHtmlScore(sc.nextFloat());
+                    students.setcScore(sc.nextFloat());
+                    stm.add(students);
+                    stm.sortByTotalScoreDesc();
+
                     break;
                 case 4:
+                    System.out.println("输入学生id");
+                    stm.modify(sc.nextInt());
                     break;
                 case 5:
                     stm.sortUsingCompare(new Comparator<Students>() {
@@ -69,8 +115,11 @@ public class SystemMain {
                     });
                     break;
                 case 7:
+                    System.out.println("输入学生id");
+                    stm.delete(sc.nextInt());
                     break;
                 case 8:
+                    System.exit(0);
                     break;
                 default:
                     break;

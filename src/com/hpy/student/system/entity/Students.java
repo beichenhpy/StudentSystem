@@ -1,5 +1,9 @@
 package com.hpy.student.system.entity;
 
+import com.hpy.student.system.manager.StudentManager;
+
+import java.util.HashMap;
+
 /**
  * 学生实体类
  *
@@ -18,7 +22,7 @@ public class Students {
     private float phpScore;
     private float htmlScore;
     private float totalScore;
-    private float rank;
+    private int rank;
 
     /**
      * 学生类的构造方法
@@ -112,6 +116,7 @@ public class Students {
         totalScore -= this.cScore;
         this.cScore = cScore;
         totalScore += cScore;
+
     }
 
     public float getPhpScore() {
@@ -142,28 +147,28 @@ public class Students {
         this.totalScore = totalScore;
     }
 
-    public float getRank() {
+    public int getRank() {
         return rank;
     }
 
-    public void setRank(float rank) {
-        this.rank = rank;
+    public void setRank(int rank) {
+       this.rank = rank;
     }
 
     @Override
     public String toString() {
-        return "Students{" +
+        return "学生信息如下： " +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", gender=" + gender +
-                ", className='" + className + '\'' +
-                ", age=" + age +
-                ", javaScore=" + javaScore +
-                ", cScore=" + cScore +
-                ", phpScore=" + phpScore +
-                ", htmlScore=" + htmlScore +
-                ", totalScore=" + totalScore +
-                ", rank=" + rank +
+                ", 姓名='" + name + '\'' +
+                ", 性别=" + gender +
+                ", 班级='" + className + '\'' +
+                "年龄=" + age +
+                ", java成绩=" + javaScore +
+                ", c成绩=" + cScore +
+                ", php成绩=" + phpScore +
+                ", html成绩=" + htmlScore +
+                ", total成绩=" + totalScore +
+                ", 排名=" + rank +
                 '}';
     }
 }

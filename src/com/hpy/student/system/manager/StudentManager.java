@@ -12,6 +12,7 @@ import com.hpy.student.system.util.MyFilter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -310,11 +311,17 @@ public class StudentManager {
             }
         }
         //3.展示数据
-        for (Students students : sortTemp) {
-            System.out.println(students);
+        for (int i = 0; i < sortTemp.length; i++) {
+            Students students = sortTemp[i];
+            for (int j = 0; j < sortTemp.length ; j++) {
+                if (students.getId() == allStudents.get(j).getId()){
+                    allStudents.get(j).setRank(i+1);
+                }
+            }
+
+
         }
     }
-
     /**
      * 排序算法，使用一个自定义比较器接口实现作为方法的参数
      * @param com MyCompare 接口的实现类对象
