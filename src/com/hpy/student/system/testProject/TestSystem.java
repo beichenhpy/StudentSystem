@@ -2,9 +2,6 @@ package com.hpy.student.system.testProject;
 
 import com.hpy.student.system.entity.Students;
 import com.hpy.student.system.manager.StudentManager;
-import com.hpy.student.system.util.MyCompare;
-import com.hpy.student.system.util.impl.MyCompareImpt;
-import com.hpy.student.system.util.impl.MyFilterImpl;
 
 public class TestSystem {
     public static void main(String[] args) {
@@ -39,8 +36,8 @@ public class TestSystem {
         //studentManager.modify(1);
         //System.out.println(studentManager.get(1));
         //studentManager.sortByTotalScoreDesc();
-        studentManager.sortUsingCompare(new MyCompareImpt(),3);
-        studentManager.showInfoUsingMyFilter(new MyFilterImpl());
+        //studentManager.modify(1);
+        //studentManager.show();
     }
 
 }

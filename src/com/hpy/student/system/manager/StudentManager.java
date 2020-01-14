@@ -8,10 +8,10 @@ package com.hpy.student.system.manager;
  */
 
 import com.hpy.student.system.entity.Students;
-import com.hpy.student.system.util.MyCompare;
 import com.hpy.student.system.util.MyFilter;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 
 /**
@@ -21,45 +21,26 @@ import java.util.Scanner;
  */
 public class StudentManager {
     /**
-     * 准备一个学生类对象数组的引用，用于保存在调用构造方法时，创建学生数组
-     * 内存堆区的空间首地址
+     * 使用ArrayList替换数组
      */
-    private Students[] allStudents = null;
-    /**
-     * DEFAULT_CAPACITY 调用无参构造方法时
-     * 默认的Student 类对象数组初始化容量
-     * private修饰防止类外使用
-     * static修饰是让这个数据在加载时执行
-     * final修饰实际上就是带有名字的常量
-     * int类型是因为数组容量本身是int范围内的
-     */
-    private static final int DEFAULT_CAPACITY = 10;
+    ArrayList<Students> allStudents =null;
 
     /**
-     * StudentManager类的无参构造方法，这里默认的数组容量创建
+     * 无参构造方法，创建ArrayList对象
      * Student类对象数组
      */
     public StudentManager() {
-        allStudents = new Students[DEFAULT_CAPACITY];
+        allStudents = new ArrayList<>();
     }
 
     /**
-     * 带参数的构造方法，用于用户初始化数组的容量
+     *
      *
      * @param initCapacity 要求数据大于等于0，如果不满足默认使用默认容量
      */
     public StudentManager(int initCapacity) {
-        if (initCapacity <= 0) {
-            allStudents = new Students[DEFAULT_CAPACITY];
-        } else {
-            allStudents = new Students[initCapacity];
-        }
+        allStudents = new ArrayList<>(initCapacity);
     }
-
-    /**
-     * 表示当前StudentManager底层数组中，保存的有效元素个数是多少
-     */
-    private int size = 0;
 
     /*
         添加方法，方法分析
@@ -94,17 +75,7 @@ public class StudentManager {
 
 
     public boolean add(Students stu) {
-        //参数合法性判断
-        if (stu == null) {
-            System.out.println("Input Parameter is invalid");
-            return false;
-        }
-        //当长度等于容量，需要扩容，扩容最小为容量+1
-        if (allStudents.length == size) {
-            grow(size + 1);
-        }
-        allStudents[size++] = stu;
-        return true;
+        return allStudents.add(stu);
     }
     /*
     完成一个指定下标位置添加数据的方法
@@ -123,26 +94,10 @@ public class StudentManager {
      *
      * @param index    执行的下标位置 大于0 小于size(有效元素个数）
      * @param students Students students
-     * @return bool 成功返回true 失败返回false
+     *
      */
-    public boolean add(int index, Students students) {
-        //参数合理性
-        if (index < 0 || index > size || null == students) {
-            System.out.println("Input Parameter is invalid");
-            return false;
-        }
-        //判断容量
-        if (allStudents.length == size) {
-            grow(size + 1);
-        }
-        //插入
-        for (int i = size; i < index; i++) {
-            allStudents[i] = allStudents[i - 1];
-        }
-        allStudents[index] = students;
-        //数据添加需要又要元素个数加赋值1
-        size += 1;
-        return true;
+    public void add(int index, Students students) {
+        allStudents.add(index,students);
     }
     /*
     完成对指定下标位置的删除数据的方法
@@ -157,20 +112,15 @@ public class StudentManager {
      * 完成对指定学号的删除数据的方法
      *
      * @param id int index 大于0 小于size
-     * @return bool 删除成功返回true 删除失败返回false
+     * @return Students 删除成功返回删除的对象
      */
-    public boolean delete(int id) {
+    public Students delete(int id) {
         //从下标为0开始，到有效元素，不能使用数组容量
         int index = findIndexById(id);
         if (index == -1) {
             System.out.println("查无此人");
         }
-        for (int i = index; i < size - 1; i++) {
-            allStudents[i] = allStudents[i + 1];
-        }
-        allStudents[size - 1] = null;
-        size--;
-        return true;
+        return allStudents.remove(index);
     }
     /*
     修改：修改学生信息
@@ -195,7 +145,7 @@ public class StudentManager {
             return false;
         }
 
-        Students student = allStudents[index];
+        Students student = allStudents.get(index);
         int choice = 0;
         boolean flag = false;
         Scanner scanner = new Scanner(System.in);
@@ -320,7 +270,7 @@ public class StudentManager {
      */
     public Students get(int studentId) {
         int index = findIndexById(studentId);
-        return index >= 0 ? allStudents[index] : null;
+        return index >= 0 ? allStudents.get(index) : null;
     }
     /*
     封装根据学生id转换下标位置
@@ -340,8 +290,12 @@ public class StudentManager {
      * 不允许对原始数据进行操作
      */
     public void sortByTotalScoreDesc(){
+        int size = allStudents.size();
         //1.创建一个新数组，将原数据取出进行排序
-        Students[] sortTemp = Arrays.copyOf(allStudents, size);
+        Students[] sortTemp = new Students[size];
+        for (int i = 0; i < size; i++) {
+            sortTemp[i] = allStudents.get(i);
+        }
         //2.选择排序算法
         for (int i = 0; i < size - 1; i++) {
             int index = i;
@@ -364,16 +318,20 @@ public class StudentManager {
     /**
      * 排序算法，使用一个自定义比较器接口实现作为方法的参数
      * @param com MyCompare 接口的实现类对象
-     * @param flag int类型 1为降序，其他为升序
+     *
      */
-    public void sortUsingCompare(MyCompare com,int flag){
+    public void sortUsingCompare(Comparator com){
+        int size = allStudents.size();
         //1.创建一个新数组，将原数据取出进行排序
-        Students[] sortTemp = Arrays.copyOf(allStudents, size);
+        Students[] sortTemp = new Students[size];
+        for (int i = 0; i < size; i++) {
+            sortTemp[i] = allStudents.get(i);
+        }
         //2.选择排序算法
         for (int i = 0; i < size - 1; i++) {
             int index = i;
             for (int j = i + 1; j < size; j++) {
-                if (com.compare(sortTemp[index],sortTemp[j],flag) > 0){
+                if (com.compare(sortTemp[index],sortTemp[j]) > 0){
                     index  = j;
                 }
             }if (index != i){
@@ -393,9 +351,9 @@ public class StudentManager {
      * @param filter 自定义过滤器接口
      */
     public void showInfoUsingMyFilter(MyFilter filter){
-        for (int i = 0; i < size; i++) {
-            if (filter.accept(allStudents[i])){
-                System.out.println(allStudents[i]);
+        for (int i = 0; i < allStudents.size(); i++) {
+            if (filter.accept(allStudents.get(i))){
+                System.out.println(allStudents.get(i));
             }
         }
     }
@@ -406,58 +364,14 @@ public class StudentManager {
      * @return 返回学生id对应下标
      */
     private int findIndexById(int studentId) {
-        if (studentId < 0 || studentId > size) {
-            System.out.println("Input Parameter is invalid");
-            return -1;
-        }
         int index = -1;
-        for (int i = 0; i < size; i++) {
-            if (allStudents[i].getId() == studentId) {
+        for (int i = 0; i < allStudents.size(); i++) {
+            if (allStudents.get(i).getId() == studentId) {
                 index = i;
                 break;
             }
         }
         return index;
-    }
-    /*
-    数组扩容，方法分析:
-        方法名：
-            grow
-        形式参数列表：
-            调用者告诉我们这里需要的最小容量
-        返回值类型：
-            void
-        权限问题：
-            public修饰：
-                有隐患，可以在类外直接调用
-                该方法实际通过add方法发现数组容量不足，自动调用的方法，和类外无关
-            private修饰：
-                保证该方法的安全性，有且只能在类内使用，约束了用户的操作
-     */
-
-    /**
-     * 这里是数组的扩容方法，是当数组容量不足时自动调用，传入参数是要求的最小容量
-     *
-     * @param minCapacity int 类型 要求的最小容量是多少
-     */
-    private void grow(int minCapacity) {
-        //1.获取原数组容量
-        int oldCapacity = allStudents.length;
-        //2.计算获得新数组容量,新数组容量约为是原数组容量的 1.5倍
-        //oldCapacity >> 1 数据按照二进制向右移动一位 相当于/2 效率略高于/2
-        int newCapacity = oldCapacity + (oldCapacity >> 1);
-        //3.判断
-        if (newCapacity - minCapacity < 0) {
-            newCapacity = minCapacity;
-        }
-        //创建新数组
-        Students[] temp = new Students[newCapacity];
-        //复制内容到新数组中
-        for (int i = 0; i < allStudents.length; i++) {
-            temp[i] = allStudents[i];
-        }
-        //复制到旧数组中
-        allStudents = temp;
     }
 
     //show
