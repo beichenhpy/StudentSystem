@@ -1,4 +1,4 @@
-package com.hpy.student.system.manager;
+package com.hpy.student.system.Controler;
 
 /*
     管理类：
@@ -7,12 +7,14 @@ package com.hpy.student.system.manager;
     增删改查，排序，过滤
  */
 
+import com.hpy.student.system.Dao.StudentDao;
 import com.hpy.student.system.entity.Students;
+import com.hpy.student.system.util.MyComparator;
 import com.hpy.student.system.util.MyFilter;
 
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 /**
@@ -24,59 +26,24 @@ public class StudentManager {
     /**
      * 使用ArrayList替换数组
      */
-    ArrayList<Students> allStudents =null;
+    List<Students> allStudents =null;
 
     /**
      * 无参构造方法，创建ArrayList对象
      * Student类对象数组
      */
     public StudentManager() {
-        allStudents = new ArrayList<>();
+
     }
+    private StudentDao sd = StudentDao.getInstance();
 
-    /**
-     *
-     *
-     * @param initCapacity 要求数据大于等于0，如果不满足默认使用默认容量
-     */
-    public StudentManager(int initCapacity) {
-        allStudents = new ArrayList<>(initCapacity);
-    }
-
-    /*
-        添加方法，方法分析
-
-        方法名： add
-        形式参数列表：
-            这里需要学生【类对象】
-            Students stu
-        返回值类型：
-            boolean 添加成功返回true,失败返回false
-        public boolean add(Students stu)
-
-       添加用户需要尾插法：
-            需要一个计数，选择什么变量
-            1.局部变量：不行运行完销毁，不易保存记录
-            2.成员变量：不销毁，始终存在，可以选择-->【最好选择】
-            3.静态变量：保存在内存数据区的变量，可以提供所有类对象使用，可以通过类名调用
-            size定义一个静态成员变量，会导致其他程序使用出现问题
-        问题：
-            StudentManager 底层数组容量为10，极有可能数组容量不足
-            我们需要对数组进行扩容，但是java中的语法规定，数组容量一旦定义无法更改
-        解决问题：
-            这里需要一个新数组，数据拷贝，保存新数组地址
-     */
-
-    /**
-     * 添加学生类对象的方法，采用尾插法
-     *
-     * @param stu 学生类对象
-     * @return boolean 添加成功返回true,失败返回false
-     */
-
-
-    public boolean add(Students stu) {
-        return allStudents.add(stu);
+    public boolean add(Students stu) throws SQLException {
+        if (null == stu){
+            System.out.println("数据不合法");
+            return false;
+        }
+        sd.add(stu);
+        return true;
     }
     /*
     完成一个指定下标位置添加数据的方法
@@ -327,12 +294,16 @@ public class StudentManager {
      * @param com MyCompare 接口的实现类对象
      *
      */
-    public void sortUsingCompare(Comparator com){
-        int size = allStudents.size();
+    public void sortUsingCompare(MyComparator com) throws SQLException {
+        List<Students> all = sd.findAll();
+        int size = all.size();
+        if (null == all){
+            return;
+        }
         //1.创建一个新数组，将原数据取出进行排序
         Students[] sortTemp = new Students[size];
         for (int i = 0; i < size; i++) {
-            sortTemp[i] = allStudents.get(i);
+            sortTemp[i] = all.get(i);
         }
         //2.选择排序算法
         for (int i = 0; i < size - 1; i++) {
@@ -347,10 +318,15 @@ public class StudentManager {
                 sortTemp[i] = temp;
             }
         }
-        //3.展示数据
-        for (Students students : sortTemp) {
-            System.out.println(students);
+        for (int i = 0; i < sortTemp.length; i++) {
+            Students students = sortTemp[i];
+            students.setRank(i+1);
+            sd.update(students);
         }
+        //3.展示数据
+//        for (Students students : sortTemp) {
+//            System.out.println(students);
+//        }
     }
 
     /**

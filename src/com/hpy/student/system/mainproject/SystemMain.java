@@ -2,40 +2,17 @@ package com.hpy.student.system.mainproject;
 
 
 import com.hpy.student.system.entity.Students;
-import com.hpy.student.system.manager.StudentManager;
+import com.hpy.student.system.Controler.StudentManager;
 import com.hpy.student.system.util.MyFilter;
+import com.hpy.student.system.util.impl.MyComparatorImp;
 
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.Scanner;
 
 public class SystemMain {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         StudentManager stm = new StudentManager();
-
-        for (int i = 0; i < 5; i++) {
-            String name = "彭于晏" + i;
-            int age = (int) (Math.random() * 50);
-            boolean gender = Math.random() > 0.5;
-            String className = "JavaEE1904";
-            float javaScore = (float) (Math.random() * 100);
-            float cScore = (float) (Math.random() * 100);
-            float phpScore = (float) (Math.random() * 100);
-            float htmlScore = (float) (Math.random() * 100);
-            Students students = new Students();
-            students.setId(i);
-            students.setName(name);
-            students.setAge(age);
-            students.setGender(gender);
-            students.setHtmlScore(htmlScore);
-            students.setPhpScore(phpScore);
-            students.setJavaScore(javaScore);
-            students.setClassName(className);
-            students.setcScore(cScore);
-            stm.add(students);
-            stm.sortByTotalScoreDesc();
-        }
-
-
 
         int choose = 0;
         boolean flag = false;
@@ -64,9 +41,8 @@ public class SystemMain {
                     System.out.println(stm.get(sc.nextInt()));
                     break;
                 case 3:
-                    System.out.println("输入学生的基本信息，按照id,姓名,性别,班级,年龄,java成绩,c成绩,php成绩,html成绩,按回车继续");
+                    System.out.println("输入学生的基本信息，按照,姓名,性别,班级,年龄,java成绩,c成绩,php成绩,html成绩,按回车继续");
                     Students students = new Students();
-                    students.setId(sc.nextInt());
                     students.setName(sc.next());
                     String gender = sc.next();
                     if (!("男".equals(gender) ||"女".equals(gender))){
@@ -91,7 +67,6 @@ public class SystemMain {
                     students.setHtmlScore(sc.nextFloat());
                     students.setcScore(sc.nextFloat());
                     stm.add(students);
-                    stm.sortByTotalScoreDesc();
 
                     break;
                 case 4:
@@ -99,12 +74,7 @@ public class SystemMain {
                     stm.modify(sc.nextInt());
                     break;
                 case 5:
-                    stm.sortUsingCompare(new Comparator<Students>() {
-                        @Override
-                        public int compare(Students stu1, Students stu2) {
-                            return (int) ((stu1.getJavaScore() - stu2.getJavaScore()) * 100);
-                        }
-                    });
+                    stm.sortUsingCompare(new MyComparatorImp());
                     break;
                 case 6:
                     stm.showInfoUsingMyFilter(new MyFilter() {

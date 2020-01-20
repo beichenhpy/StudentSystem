@@ -1,9 +1,5 @@
 package com.hpy.student.system.entity;
 
-import com.hpy.student.system.manager.StudentManager;
-
-import java.util.HashMap;
-
 /**
  * 学生实体类
  *
@@ -30,6 +26,18 @@ public class Students {
     public Students() {
     }
 
+    public Students(String name, boolean gender, String className, int age, float javaScore, float cScore, float phpScore, float htmlScore) {
+        this.name = name;
+        this.gender = gender;
+        this.className = className;
+        this.age = age;
+        this.javaScore = javaScore;
+        this.cScore = cScore;
+        this.phpScore = phpScore;
+        this.htmlScore = htmlScore;
+        this.totalScore = javaScore + htmlScore + phpScore + cScore;
+    }
+
     /**
      * @param id        学生id号
      * @param name      学生姓名
@@ -41,6 +49,7 @@ public class Students {
      * @param phpScore  学生Php成绩
      * @param htmlScore 学生html成绩
      */
+
     public Students(int id, String name, boolean gender, String className, int age, float javaScore, float cScore, float phpScore, float htmlScore) {
         this.id = id;
         this.name = name;
