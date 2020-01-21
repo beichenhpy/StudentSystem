@@ -41,6 +41,11 @@ public class StudentDao extends BaseDao {
 
         return super.query(sql,null,Students.class);
     }
+    public List<Students> findAllByRank() throws SQLException {
+        String sql = "select * from student order by `rank` asc ";
+
+        return super.query(sql,null,Students.class);
+    }
     public int update(Students students) throws SQLException {
         Object[] parameter = null;
         String sql = "update student set name = ? ,age = ?,gender = ?,className = ?," +
@@ -51,5 +56,14 @@ public class StudentDao extends BaseDao {
 
 
         return super.update(sql, parameter);
+    }
+    public List<Students> findOne(int id) throws SQLException{
+        String sql = "select * from student where id = ?";
+
+        return super.query(sql,new Object[]{id},Students.class);
+    }
+    public int delete(int id) throws SQLException {
+        String sql = "delete from student where id = ?";
+        return super.update(sql,new Object[]{id});
     }
 }

@@ -38,7 +38,10 @@ public class SystemMain {
                     break;
                 case 2:
                     System.out.println("请输出要查询学生Id");
-                    System.out.println(stm.get(sc.nextInt()));
+                    Students students1 = stm.get(sc.nextInt());
+                    if (null != students1){
+                        System.out.println(students1);
+                    }
                     break;
                 case 3:
                     System.out.println("输入学生的基本信息，按照,姓名,性别,班级,年龄,java成绩,c成绩,php成绩,html成绩,按回车继续");

@@ -1,5 +1,8 @@
 package com.hpy.student.system.util;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.commons.dbutils.QueryRunner;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
@@ -9,25 +12,24 @@ public class JdbcUtil {
    private static String url = null;
    private static String user = null;
    private static String pwd = null;
+   private static QueryRunner queryRunner =null;
 
-    static {
-        Properties properties = new Properties();
-        try {
-            properties.load(new FileInputStream("./src/db.properties"));
-            url = properties.getProperty("url");
-            user = properties.getProperty("user");
-            pwd = properties.getProperty("pwd");
-            String driver = properties.getProperty("driver");
-            Class.forName(driver);
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+   private static ComboPooledDataSource pool = new ComboPooledDataSource();
+
+
+
+    public static QueryRunner getQueryRunner(){
+        synchronized (JdbcUtil.class){
+            if (null == queryRunner){
+                queryRunner = new QueryRunner();
+            }
         }
-
+        return queryRunner;
     }
     public static Connection getConnection() {
         Connection con = null;
         try {
-            con = DriverManager.getConnection(url,user,pwd);
+            con = pool.getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }

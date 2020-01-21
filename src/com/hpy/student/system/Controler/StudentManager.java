@@ -82,13 +82,14 @@ public class StudentManager {
      * @param id int index 大于0 小于size
      * @return Students 删除成功返回删除的对象
      */
-    public Students delete(int id) {
+    public boolean delete(int id) throws SQLException {
         //从下标为0开始，到有效元素，不能使用数组容量
-        int index = findIndexById(id);
+        List<Students> all = sd.findAll();
+        int index = id - 1;
         if (index == -1) {
             System.out.println("查无此人");
         }
-        return allStudents.remove(index);
+        return sd.delete(id) == 1;
     }
     /*
     修改：修改学生信息
@@ -105,15 +106,16 @@ public class StudentManager {
      * @param studentId int类型
      * @return 修改成功true 修改失败false
      */
-    public boolean modify(int studentId) {
+    public boolean modify(int studentId) throws SQLException {
         //从下标为0开始，到有效元素，不能使用数组容量
-        int index = findIndexById(studentId);
+        List<Students> all = sd.findAll();
+        int index = studentId -1;
         if (index == -1) {
             System.out.println("查无此人");
             return false;
         }
 
-        Students student = allStudents.get(index);
+        Students student = all.get(index);
         int choice = 0;
         boolean flag = false;
         Scanner scanner = new Scanner(System.in);
@@ -216,6 +218,7 @@ public class StudentManager {
                     break;
             }
             if (flag) {
+                sd.update(student);
                 System.out.println("再见！");
                 break;
             }
@@ -236,9 +239,9 @@ public class StudentManager {
      * @param studentId 学生id号
      * @return 找到返回学生对象 找不到返回null
      */
-    public Students get(int studentId) {
-        int index = findIndexById(studentId);
-        return index >= 0 ? allStudents.get(index) : null;
+    public Students get(int studentId) throws SQLException {
+        List<Students> one = sd.findOne(studentId);
+        return studentId >0 ? one.get(0) : null;
     }
     /*
     封装根据学生id转换下标位置
@@ -323,6 +326,10 @@ public class StudentManager {
             students.setRank(i+1);
             sd.update(students);
         }
+        List<Students> allByRank = sd.findAllByRank();
+        for (Students students : allByRank) {
+            System.out.println(students);
+        }
         //3.展示数据
 //        for (Students students : sortTemp) {
 //            System.out.println(students);
@@ -340,27 +347,13 @@ public class StudentManager {
             }
         }
     }
-    /**
-     * 学生id转换下标位置
-     *
-     * @param studentId int类型 学生id
-     * @return 返回学生id对应下标
-     */
-    private int findIndexById(int studentId) {
-        int index = -1;
-        for (int i = 0; i < allStudents.size(); i++) {
-            if (allStudents.get(i).getId() == studentId) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
+
 
     //show
-    public void show() {
-        for (Students student : allStudents) {
-            System.out.println(student);
+    public void show() throws SQLException {
+        List<Students> all = sd.findAll();
+        for (Students students : all) {
+            System.out.println(students);
         }
     }
 

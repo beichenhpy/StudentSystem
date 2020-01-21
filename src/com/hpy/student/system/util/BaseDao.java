@@ -1,6 +1,9 @@
 package com.hpy.student.system.util;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
@@ -51,17 +54,11 @@ public class BaseDao {
         // 1. 获取数据库连接
         Connection connection = JdbcUtil.getConnection();
 
-        // 2. 使用SQL语句 获取对应的PreparedStatement
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        QueryRunner queryRunner = JdbcUtil.getQueryRunner();
 
-        // 3. 处理PreparedStatement参数
-        preparedStatement = parametersAssignment(preparedStatement, parameters);
-
-        // 4. 执行SQL语句
-        int i = preparedStatement.executeUpdate();
-
+        int i = queryRunner.update(connection,sql, parameters);
         // 5. 关闭资源
-        JdbcUtil.close(connection, preparedStatement);
+        JdbcUtil.close(connection);
 
         // 6. 返回受影响行数
         return i;
@@ -115,88 +112,17 @@ public class BaseDao {
         // 1. 获取数据库连接对象
         Connection connection = JdbcUtil.getConnection();
 
-        // 2. 使用 SQL预处理，获取 PreparedStatement对象
-        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        QueryRunner queryRunner = JdbcUtil.getQueryRunner();
 
-        // 3. 处理PreparedStatement参数
-        preparedStatement = parametersAssignment(preparedStatement, parameters);
+        List<T> query = queryRunner.query(connection,sql, new BeanListHandler<T>(cls),parameters);
 
-        // 5. 执行 SQL语句，获取 ResultSet 结果集对象
-        ResultSet resultSet = preparedStatement.executeQuery();
 
-        // 6. 准备 List 集合
-        List<T> list = new ArrayList<>();
-
-        // 7. 获取结果集元数据
-        ResultSetMetaData metaData = resultSet.getMetaData();
-
-        // 8. 获取结果集元数据中的字段个数
-        int columnCount = metaData.getColumnCount();
-
-        // 9. 遍历结果集
-        while (resultSet.next()) {
-            T t = null;
-            try {
-                // 10. 创建对应数据类型的类对象，使用反射处理
-                t = cls.getConstructor(null).newInstance(null);
-                // 11. 利用结果集元数据中的字段个数，来处理数据行
-                for (int i = 1; i <= columnCount; i++) {
-                    // 12. 获取字段名
-                    String fieldName = metaData.getColumnName(i);
-
-                    // 13. 获取对应字段名的数据
-                    Object value = resultSet.getObject(fieldName);
-
-                    // 14. 使用BeanUtils给指定字段的数据在类对象中赋值
-                    BeanUtils.setProperty(t, fieldName, value);
-                }
-                // 15. 存放到 List集合中
-                list.add(t);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-
-        }
-
-        JdbcUtil.close(connection, preparedStatement, resultSet);
+        JdbcUtil.close(connection);
 
         // 15. 如果 List集合中的有效元素个数为 0 ，返回 null，其他返回 List对象
-        return list.size() != 0 ? list : null;
+        return query.size() != 0 ? query : null;
     }
 
-    /*
-    权限修饰:
-        private 仅供类内使用，在类内处理当前方法中 PreparedStatement
-    方法名：
-        参数处理 parametersAssignment
-    形式参数列表:
-        PreparedStatement类对象
-        参数数组 Object[] parameters
-    返回值类型：
-        PreparedStatement对象
 
-    private PreparedStatement parametersAssignment(PreparedStatement preparedStatement, Object[] parameters)
-     */
-
-    /**
-     * 类内处理PreparedStatement对象参数的方法
-     *
-     * @param preparedStatement PreparedStatement 对象
-     * @param parameters        参数数组
-     * @return PreparedStatement对象
-     */
-    private PreparedStatement parametersAssignment(PreparedStatement preparedStatement, Object[] parameters) throws SQLException {
-        // 3. 获取 SQL语句的参数个数
-        int parameterCount = preparedStatement.getParameterMetaData().getParameterCount();
-
-        // 4. 给予 PreparedStatement 预处理 SQL语句赋值参数
-        if (parameters != null && parameters.length == parameterCount) {
-            for (int i = 1; i <= parameterCount; i++) {
-                preparedStatement.setObject(i, parameters[i - 1]);
-            }
-        }
-
-        return preparedStatement;
-    }
 }
 
